@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Ingredient</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.x/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x/firebase-firestore.js"></script>
+</head>
+<body>
+  <h1>Add New Ingredient</h1>
+  <form id="ingredientForm">
+    <!-- Name remains a text input -->
+    <label>Name: <input type="text" id="name" required></label><br>
+
+    <!-- Type Dropdown -->
+    <label>Type:
+      <select id="type" required>
+        <option value="Protein">Protein</option>
+        <option value="Vegetable">Vegetable</option>
+        <option value="Fruit">Fruit</option>
+        <option value="Grain">Grain</option>
+        <option value="Functional Additive">Functional Additive</option>
+      </select>
+    </label><br>
+
+    <!-- Calories and other nutritional info remain number inputs -->
+    <label>Calories per Gram: <input type="number" step="0.01" id="calories_per_gram"></label><br>
+    <label>Protein Content (g): <input type="number" step="0.1" id="protein_content"></label><br>
+    <label>Fat Content (g): <input type="number" step="0.1" id="fat_content"></label><br>
+    <label>Fiber Content (g): <input type="number" step="0.1" id="fiber_content"></label><br>
+    <label>Carbohydrates (g): <input type="number" step="0.1" id="carbohydrates"></label><br>
+
+    <!-- Effects as multi-select dropdown or checkboxes (comma-separated) -->
+    <label>Effects:
+      <select id="effects" multiple>
+        <option value="Calming">Calming</option>
+        <option value="Digestive Support">Digestive Support</option>
+        <option value="Vision Health">Vision Health</option>
+        <option value="Energy Boost">Energy Boost</option>
+      </select>
+    </label><br>
+
+    <!-- Allergy Risk Checkbox -->
+    <label>Allergy Risk: <input type="checkbox" id="allergy_risk"></label><br>
+
+    <!-- Digestibility remains a number input -->
+    <label>Digestibility (1-10): <input type="number" min="1" max="10" id="digestibility"></label><br>
+
+    <!-- Texture Dropdown -->
+    <label>Texture:
+      <select id="texture">
+        <option value="Crunchy">Crunchy</option>
+        <option value="Chewy">Chewy</option>
+        <option value="Soft">Soft</option>
+      </select>
+    </label><br>
+
+    <!-- Recommended Prep Methods as multi-select dropdown -->
+    <label>Recommended Prep Methods:
+      <select id="recommended_prep_methods" multiple>
+        <option value="Bake">Bake</option>
+        <option value="Dehydrate">Dehydrate</option>
+        <option value="Puree">Puree</option>
+        <option value="Boil">Boil</option>
+      </select>
+    </label><br>
+
+    <!-- Shelf Life and Flavor Profile remain text inputs -->
+    <label>Shelf Life: <input type="text" id="shelf_life"></label><br>
+    <label>Flavor Profile: <input type="text" id="flavor_profile"></label><br>
+
+    <!-- Other fields like recommended_percentage, max_usage, etc. stay as before -->
+    <label>Dog Safe: <input type="checkbox" id="dog_safe"></label><br>
+    <label>Age Restriction: <input type="text" id="age_restriction"></label><br>
+    <label>Toxicity Level: <input type="text" id="toxicity_level"></label><br>
+
+    <!-- Medicinal Properties as multi-select dropdown -->
+    <label>Medicinal Properties:
+      <select id="medicinal_properties" multiple>
+        <option value="Antioxidant">Antioxidant</option>
+        <option value="Anti-inflammatory">Anti-inflammatory</option>
+        <option value="Immune Support">Immune Support</option>
+      </select>
+    </label><br>
+
+    <!-- Source, Cost per Gram, and Additional Notes remain text or number inputs -->
+    <button type="button" onclick="addIngredient()">Add Ingredient</button>
+  </form>
+
+  <script>
+    // Firebase Initialization
+      const firebaseConfig = {
+  apiKey: "AIzaSyAZ2qa9ZSvRUaeyD8Npk88URBkHx7C1gfg",
+  authDomain: "dog-treat-system.firebaseapp.com",
+  projectId: "dog-treat-system",
+  storageBucket: "dog-treat-system.firebasestorage.app",
+  messagingSenderId: "474615415337",
+  appId: "1:474615415337:web:d322f814f24e79adedd238",
+  measurementId: "G-2Z4Z737121"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Function to add the ingredient
+    function addIngredient() {
+      const ingredient = {
+        name: document.getElementById("name").value,
+        type: document.getElementById("type").value,
+        calories_per_gram: parseFloat(document.getElementById("calories_per_gram").value),
+        protein_content: parseFloat(document.getElementById("protein_content").value),
+        fat_content: parseFloat(document.getElementById("fat_content").value),
+        fiber_content: parseFloat(document.getElementById("fiber_content").value),
+        carbohydrates: parseFloat(document.getElementById("carbohydrates").value),
+        effects: Array.from(document.getElementById("effects").selectedOptions).map(option => option.value),
+        allergy_risk: document.getElementById("allergy_risk").checked,
+        digestibility: parseInt(document.getElementById("digestibility").value),
+        texture: document.getElementById("texture").value,
+        recommended_prep_methods: Array.from(document.getElementById("recommended_prep_methods").selectedOptions).map(option => option.value),
+        shelf_life: document.getElementById("shelf_life").value,
+        flavor_profile: document.getElementById("flavor_profile").value,
+        dog_safe: document.getElementById("dog_safe").checked,
+        age_restriction: document.getElementById("age_restriction").value,
+        toxicity_level: document.getElementById("toxicity_level").value,
+        medicinal_properties: Array.from(document.getElementById("medicinal_properties").selectedOptions).map(option => option.value)
+      };
+
+      db.collection("ingredients").doc(ingredient.name.toLowerCase()).set(ingredient)
+        .then(() => {
+          alert("Ingredient added successfully!");
+          document.getElementById("ingredientForm").reset();
+        })
+        .catch(error => {
+          console.error("Error adding ingredient: ", error);
+        });
+    }
+  </script>
+</body>
+</html>
